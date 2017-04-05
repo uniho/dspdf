@@ -45,7 +45,7 @@ dspdf.exe, libeay32.dll, opensc.dll を同じディレクトリにコピーし�
 国が検証アプリや検証用APIを直接に提供するつもりはなく、
 総務大臣が認めた私人に検証アプリや検証用APIを提供させるスタンスのようです。
 それを受けて、例えば、[NTTコミュニケーションズが有料で検証用APIを提供しています](http://www.ntt.com/business/services/application/authentication/mysign.html)。
-認証サーバーへのアクセスはできるだけ制限したいということなのでしょうか。いずれにせよ今のところ気軽に「検証アプリ」を作れるような環境ではなさそうです。  
+認証サーバーへのアクセスはできるだけ制限したいということなのでしょうか。いずれにせよ今のところ気軽に「検証アプリ」を作れるような環境ではなさそうです。
 また、マイナンバーカードには、JR東日本のSuicaみたいに、パスワード(PINコード)を入力せずに
 利用できる機能も[あるようです](http://www.soumu.go.jp/menu_news/s-news/01gyosei02_02000134.html)。
 検証用APIがオープンになればマイナンバーカードの活用範囲が広がりそうな気がしますよね)
@@ -102,7 +102,7 @@ OpenSSL github リポジトリで公開されている OpenSSL 1.1.1 のソー�
 なお、libcrypto-1_1.dll から libeay32.dll にリネームしています。
 
 付属の opensc.dll は、マイナンバーカード対応の、OpenSC github リポジトリ master branche（2017年3月現在ではrelease前）から
-独自ビルドしたものです。
+独自ビルドしたものです（commit e7915ec）。
 
 -----
 Copyright(c)2017- [UNI法務行政書士事務所](http://uni.s17.xrea.com/) All rights reserved.  
