@@ -12,7 +12,7 @@ PDF形式のファイル(以下単に「PDF」といいます)にマイナンバ
 * Windows7以降のOS。
 
 ## ダウンロード
-[ここ](/releases/latest)からダウンロードできます。
+[ここ](../../releases/latest)からダウンロードできます。
 
 ## インストール
 dspdf.exe, libeay32.dll, opensc.dll を同じディレクトリにコピーしてください。
