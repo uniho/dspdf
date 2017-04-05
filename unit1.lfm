@@ -1,0 +1,54 @@
+object Form1: TForm1
+  Left = 272
+  Height = 240
+  Top = 161
+  Width = 320
+  AllowDropFiles = True
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  Font.Height = -16
+  Font.Name = 'Meiryo UI'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnDropFiles = FormDropFiles
+  LCLVersion = '1.6.4.0'
+  object LabelPIN: TLabel
+    Left = 17
+    Height = 20
+    Top = 16
+    Width = 117
+    Caption = '署名用パスワード:'
+    ParentColor = False
+  end
+  object EditPIN: TEdit
+    Left = 17
+    Height = 28
+    Top = 48
+    Width = 287
+    TabOrder = 0
+    TextHintFontStyle = []
+  end
+  object CheckBoxHidePIN: TCheckBox
+    Left = 25
+    Height = 24
+    Top = 88
+    Width = 130
+    Caption = 'パスワード非表示'
+    OnChange = CheckBoxHidePINChange
+    TabOrder = 1
+  end
+  object MemoInfo: TMemo
+    Left = 17
+    Height = 104
+    Top = 120
+    Width = 283
+    BorderStyle = bsNone
+    Color = clBtnFace
+    Lines.Strings = (
+      'MemoInfo'
+    )
+    ReadOnly = True
+    TabOrder = 2
+  end
+end
