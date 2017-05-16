@@ -18,7 +18,7 @@ uses
   opensc;
 
 const
-  VERSION_STR = 'v1.0.170405';
+  VERSION_STR = 'v1.0.170516';
 
 type
 
@@ -35,11 +35,8 @@ type
     procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
   private
     { private declarations }
-    ctx, card, p15card: pointer;
-    p15id: sc_pkcs15_id;
-    p15key: p_sc_pkcs15_object;
     pdf_objsize, pdf_startxref, pdf_rootobj_num, pdf_pageobj_num: integer;
-    pdf_rootobj, pdf_pageobj, newPdf1, newPdf2: string;
+    pdf_rootobj, pdf_pageobj: string;
     PinCode: string;
     procedure DoSign(const fname: string);
     procedure AnalyzePDF(src: pchar; srcl: integer);
@@ -52,6 +49,7 @@ var
 
 implementation
 uses
+  dateutils,
   {$IFDEF USE_SHA1}
   DCPsha1,
   {$ELSE}
@@ -201,6 +199,13 @@ end;
 procedure TForm1.DoSign(const fname: string);
 const
   SIGN_LEN = 10000; // 署名の長さ
+var
+  ctx, card, p15card: pointer;
+  p15id: sc_pkcs15_id;
+  p15key: p_sc_pkcs15_object;
+  newPdf1, newPdf2: string;
+  sign_dt: pASN1_TIME;
+  dt_sign_dt: TDateTime;
 
   function GetErrMsg(r: integer): string;
   begin
@@ -341,6 +346,7 @@ const
         r:= ASN1_INTEGER_set(si^.version, 1);
         if r = 0 then
           RaiseError('ASN1_INTEGER_setエラー');
+
         r:= X509_NAME_set(
          @si^.issuer_and_serial^.issuer, X509_get_issuer_name(x));
         if r = 0 then
@@ -365,7 +371,7 @@ const
           RaiseError('auth_attr->contentType作成エラー');
 
         r:= PKCS7_add_signed_attribute(
-         si, NID_pkcs9_signingTime, V_ASN1_UTCTIME, X509_gmtime_adj(nil, 0));
+         si, NID_pkcs9_signingTime, V_ASN1_UTCTIME, sign_dt);
         if r = 0 then
           RaiseError('auth_attr->signingTime作成エラー');
 
@@ -493,8 +499,11 @@ const
 
     o_sig:=Format(
       '%d 0 obj'#$0d#$0a +
-      '<</Type /Sig /Filter /Adobe.PPKLite /SubFilter /adbe.pkcs7.detached'#$0d#$0a,
-      [pdf_objsize+3{Sig}]);
+      '<</Type /Sig /Filter /Adobe.PPKLite /SubFilter /adbe.pkcs7.detached' +
+      ' /M (D:%s+09''00'')' +
+      ' /Name (.)' + // とりあえずピリオドに
+      #$0d#$0a,
+      [pdf_objsize+3{Sig}, FormatDateTime('yyyymmddhhnnss', dt_sign_dt)]);
 
     l1:=0;
     l2:=0;
@@ -607,6 +616,16 @@ begin
                'JPKI利用者ソフトを使用して正しいパスワードを確認することをお勧めします。'
               );
             end;
+
+            // 署名日時の取得（現在日時）
+            sign_dt:= X509_gmtime_adj(nil, 0);
+            SetLength(s, sign_dt^.length);
+            Move(sign_dt^.data^, s[1], sign_dt^.length);
+            dt_sign_dt:=
+             EncodeDate(2000+StrToInt(s[1]+s[2]),  StrToInt(s[3]+s[4]),  StrToInt(s[5]+s[6])) +
+             EncodeTime(StrToInt(s[7]+s[8]), StrToInt(s[9]+s[10]), StrToInt(s[11]+s[12]), 0);
+            // 世界標準時->日本標準時
+            dt_sign_dt:= IncHour(dt_sign_dt, 9);
 
             // PDF読み込み
             fsIn:= TMemoryStream.Create;
